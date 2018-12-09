@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/stylesheets/home.css">
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/javascripts/jquery.md5.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    $(document).ready(function() {
+        $("#register-form").on('submit',function (event) {
+            event.preventDefault();
+            //get all the inputs into an array.
+            var $inputs = $('#register-form :input');
+
+            // not sure if you wanted this, but I thought I'd add it.
+            // get an associative array of just the values.
+            var values = {};
+            $inputs.each(function() {
+                if(this.name == "password"){
+                    values[this.name] = $.MD5($(this).val());
+                }else {
+                    values[this.name] = $(this).val();
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/signup",
+                data: values,
+                async:false,
+                dataType:"json",
+                success: function(response) {
+
+                    if (response.redirect) {
+                        document.location.href = response.redirect;
+                    }
+                }
+            });
+
+        });
+
+        $("#login-form").on('submit',function (event) {
+            event.preventDefault();
+            //get all the inputs into an array.
+            var $inputs = $('#login-form :input');
+
+            // not sure if you wanted this, but I thought I'd add it.
+            // get an associative array of just the values.
+            var values = {};
+            $inputs.each(function() {
+                if(this.name == "password"){
+                    values[this.name] = $.MD5($(this).val());
+                }else {
+                    values[this.name] = $(this).val();
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: values,
+                async:false,
+                dataType:"json",
+                success: function(response) {
+
+                    if (response.redirect) {
+                        document.location.href = response.redirect;
+                    }
+                }
+            });
+
+        });
+    });
+</script>
+<input type='checkbox' id='form-switch'>
+<form id='login-form'>
+    <input type="text" placeholder="Email" name="email" required>
+    <input type="password" placeholder="Password" name="password" required>
+    <button type='submit'>Login</button>
+    <label for='form-switch'><span>Register</span></label>
+</form>
+<form id='register-form'>
+    <input type="email" placeholder="Email" name="email" required>
+    <input type="password" placeholder="Password" name="password" required>
+    <input type="text" placeholder="Name" name="name" required>
+    <input type="text" placeholder="Contact No." name="contact_detail" required>
+    <button type="submit">Register</button>
+    <label for='form-switch'>Already Member ? Sign In Now..</label>
+</form>
+<p align="center"> {{message}} </p>
+</body>
+</html>
